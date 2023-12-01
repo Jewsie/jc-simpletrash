@@ -2,7 +2,7 @@
 
 Video; https://youtu.be/lBQlkj8cmag
 
-Discord for support; [https://www.discord.gg/invite/kssGtzJu](https://discord.gg/Kt45hmU9wb)
+Discord for support; https://discord.gg/Kt45hmU9wb
 
 jc-simpletrash is as it states in it's name! It's a simple script for searching in trashcans for items, with an incredibly easy and modifiable config file. All you need to do is assign which models of trashcans should be searchable and what items can be found and you'll be basically good to go!
 
