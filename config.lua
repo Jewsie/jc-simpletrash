@@ -1,6 +1,5 @@
 Config = Config or {}
 
-Config.SearchCooldownTimer = 1800 -- How long people has to wait to search the same trashcan in seconds!
 Config.AmountToFind = math.random(1, 5) -- The range of how many items you can find in each dumpster/trash, can be a solid number too!
 Config.QBVersion == 'oldqb' -- Just the logic of how inventory itembox is handled!
 
