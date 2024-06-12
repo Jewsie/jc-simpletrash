@@ -1,6 +1,8 @@
 Config = Config or {}
 
 Config.SearchCooldownTimer = 1800 -- How long people has to wait to search the same trashcan in seconds!
+Config.AmountToFind = math.random(1, 5) -- The range of how many items you can find in each dumpster/trash, can be a solid number too!
+Config.QBVersion == 'oldqb' -- Just the logic of how inventory itembox is handled!
 
 Config.Trashcans = { -- The models of the trashcans you want to be searchable!
     'prop_dumpster_02a',
@@ -10,32 +12,44 @@ Config.Trashcans = { -- The models of the trashcans you want to be searchable!
 }
 
 Config.ItemsToFind = { -- The items that can be found in trashcans
-    'phone',
-    'tablet',
-    'bandage',
-    'cryptostick',
-    'aluminum',
-    'iron',
-    'steel',
-    'plastic',
-    'rubber',
-    'glass',
-    'metalscrap',
-    'rolling_paper',
-    'water_bottle',
-    'tosti',
-    'bread',
-    'weed_skunk_seed'
+    {
+        item = 'phone', -- The ID/Name of the item from inventory
+        price = 0, -- Just leave this at 0
+        amount = math.random(2, 4), -- Can be a solid number
+        info = {}, -- If you want a specific data to be assigned for the item
+        type = 'item', -- Just the category of the item
+        chance = 50 -- How high a chance it is to find!
+    },
+    {
+        item = 'tablet',
+        price = 0,
+        amount = math.random(2, 4),
+        info = {},
+        type = 'item',
+        chance = 50
+    },
+    {
+        item = 'bandage',
+        price = 0,
+        amount = math.random(2, 4),
+        info = {},
+        type = 'item',
+        chance = 50
+    },
+    {
+        item = 'cryptostick',
+        price = 0,
+        amount = 1,
+        info = {},
+        type = 'item',
+        chance = 50
+    },
+    {
+        item = 'bread',
+        price = 0,
+        amount = 1,
+        info = {},
+        type = 'item',
+        chance = 100
+    },
 }
-
-Config.LowChancePercentage = 10 -- 10% chance you'll get the low chance amount of items!
-Config.MediumChancePercentage = 50 -- 50% chance you'll get the medium chance amount of items!
-Config.HighChancePercentage = 80 -- 80% chance you'll get the high chance amount of items!
-
-Config.LowChanceItemAmount = 3 -- How many different items you can find in low chance!
-Config.MediumChanceItemAmount = 2 -- How many different items you can find in low chance!
-Config.HighChanceItemAmount = 1 -- How many different items you can find in low chance!
-
-Config.LowChanceCount = math.random(1, 3) -- How many of each items can be found, can be a solid number too!
-Config.MediumChanceCount = math.random(1, 2) -- How many of each items can be found, can be a solid number too!
-Config.HighChanceCount = 1 -- How many of each items can be found, can be a solid number too!

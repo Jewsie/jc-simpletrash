@@ -9,42 +9,59 @@ Citizen.CreateThread(function()
                 label = 'Search trashcan',
                 icon = 'fas fa-trashcan',
                 targeticon = 'fas fa-eye',
-                action = function()
-                    local playerPos = GetEntityCoords(PlayerPedId())
-                    local closestTrashcan = 0
+                action = function(entity)
+                    local net_ent = ObjToNet(entity)
 
-                    for _, binModel in pairs(Config.Trashcans) do
-                        closestTrashcan = GetClosestObjectOfType(playerPos.x, playerPos.y, playerPos.z, 1.0, GetHashKey(binModel), false, false, false)
-                        
-                        if closestTrashcan ~= 0 then
-                            break
+                    QBCore.Functions.TriggerCallback('jc-trash:getData', function(data)
+                        if data then
+                            if #data > 0 then
+                                if Config.QBVersion == 'oldqb' then
+                                    TriggerServerEvent('inventory:server:OpenInventory', 'stash', 'dumpster_' .. net_ent, {
+                                        maxweight = 1000000,
+                                        slots = 30,
+                                    })
+                                    TriggerEvent('inventory:client:SetCurrentStash', 'dumpster_' .. net_ent)
+                                else
+                                    TriggerServerEvent('qb-inventory:server:OpenInventory', 'stash', 'dumpster_' .. net_ent, {
+                                        maxweight = 1000000,
+                                        slots = 30,
+                                    })
+                                    TriggerEvent('qb-inventory:client:SetCurrentStash', 'dumpster_' .. net_ent)
+                                end
+                            else
+                                QBCore.Functions.Notify('Trash is empty!', 'error', 3000)
+                            end
+                        else
+                            local tableData = {}
+                            for i = 1, Config.AmountToFind do
+                                local item = Config.ItemsToFind[math.random(1, #Config.ItemsToFind)]
+                                local chance = math.random(1, 100)
+
+                                while chance > item.chance do
+                                    Wait(1)
+                                    item = Config.ItemsToFind[math.random(1, #Config.ItemsToFind)]
+                                end
+                                tableData[#tableData + 1] = item
+                                TriggerServerEvent('jc-trash:server:initialize', 'dumpster_' .. net_ent, tableData)
+                                Wait(500)
+                                if Config.QBVersion == 'oldqb' then
+                                    TriggerServerEvent('inventory:server:OpenInventory', 'stash', 'dumpster_' .. net_ent, {
+                                        maxweight = 1000000,
+                                        slots = 30,
+                                    })
+                                    TriggerEvent('inventory:client:SetCurrentStash', 'dumpster_' .. net_ent)
+                                else
+                                    TriggerServerEvent('qb-inventory:server:OpenInventory', 'stash', 'dumpster_' .. net_ent, {
+                                        maxweight = 1000000,
+                                        slots = 30,
+                                    })
+                                    TriggerEvent('qb-inventory:client:SetCurrentStash', 'dumpster_' .. net_ent)
+                                end
+                            end
                         end
-                    end
-
-                    if closestTrashcan ~= 0 then
-                        local binPos = GetEntityCoords(closestTrashcan)
-                        TriggerServerEvent('jc-simpletrash:server:searchtrash', binPos)
-                    else
-                        print("No trashcan found nearby.")
-                    end
+                    end, 'dumpster_' .. net_ent)
                 end
             }
         }
     })
-end)
-
-RegisterNetEvent('jc-simpletrash:client:searchtrash')
-AddEventHandler('jc-simpletrash:client:searchtrash', function(binPosition)
-    TaskStartScenarioInPlace(PlayerPedId(), "PROP_HUMAN_PARKING_METER", 10000, false)
-    QBCore.Functions.Progressbar('searching_trash', 'Searching Trashcan...', 10000, false, true, {
-        disableMovement = true,
-        disableCarMovement = true,
-        disableMouse = false,
-        disableCombat = true
-        }, {}, {}, {}, function()
-            TriggerServerEvent('jc-simpletrash:server:giveitems', binPosition)
-            ClearPedTasks(PlayerPedId())
-        end, function()
-            ClearPedTasks(PlayerPedId())
-    end)
 end)

@@ -1,56 +1,30 @@
 local QBCore = exports['qb-core']:GetCoreObject()
+local trashSearched = {}
 
-local trashData = {}
-local hasSearched = false
-
-RegisterServerEvent('jc-simpletrash:server:searchtrash')
-AddEventHandler('jc-simpletrash:server:searchtrash', function(binPos)
-    local src = source
-    
-    local binPosition = tostring(binPos)
-
-    if not trashData[binPosition] then
-        trashData[binPosition] = {hasSearched = false}
-    end
-
-    if not trashData[binPosition].hasSearched then
-        TriggerClientEvent('jc-simpletrash:client:searchtrash', src, binPosition)
-    else
-        QBCore.Functions.Notify(src, 'You have already searched this trashcan!', 'error', 3000)
-    end
-end)
-
-RegisterServerEvent('jc-simpletrash:server:giveitems')
-AddEventHandler('jc-simpletrash:server:giveitems', function(binPosition)
-    local src = source
-    local Player = QBCore.Functions.GetPlayer(src)
-    local chance = math.random(1, 100)
-
-    if chance <= Config.LowChancePercentage then
-        for i = 1, Config.LowChanceItemAmount do
-            local item = Config.ItemsToFind[math.random(1, #Config.ItemsToFind)]
-
-            Player.Functions.AddItem(item, Config.LowChanceCount)
-            TriggerClientEvent('inventory:client:ItemBox', source, QBCore.Shared.Items[item], 'add')
+RegisterNetEvent('jc-trash:server:initialize', function(key, items)
+    for i, v in pairs(items) do
+        if not v.slot then
+            v.slot = i
         end
-    elseif chance <= Config.MediumChancePercentage and chance > Config.LowChancePercentage then
-        for i = 1, Config.MediumChanceItemAmount do
-            local item = Config.ItemsToFind[math.random(1, #Config.ItemsToFind)]
-
-            Player.Functions.AddItem(item, Config.MediumChanceCount)
-            TriggerClientEvent('inventory:client:ItemBox', source, QBCore.Shared.Items[item], 'add')
-        end
-    elseif chance > Config.MediumChanceCount and chance <= Config.HighChancePercentage then
-        local item = Config.ItemsToFind[math.random(1, #Config.ItemsToFind)]
-
-        Player.Functions.AddItem(item, Config.HighChanceCount)
-        TriggerClientEvent('inventory:client:ItemBox', source, QBCore.Shared.Items[item], 'add')
-    else
-        QBCore.Functions.Notify(src, 'You didn\'t find anything in this trashcan!', 'error', 3000)
     end
 
-    trashData[binPosition].hasSearched = true
+    if not trashSearched[key] then
+        trashSearched[key] = items
+    end
 
-    Wait(1800 * 1000)
-    trashData[binPosition].hasSearched = false
+    MySQL.query('SELECT `items` FROM `stashitems` WHERE `stash` = ?', {key}, function(response)
+        if response and #response > 0 then
+            for i = 1, #response do
+                local row = response[i]
+                local dbItems = json.decode(row.items)
+                dbItems = items
+                MySQL.update.await('UPDATE stashitems SET items = ? WHERE stash = ?', {json.encode(dbItems), key})
+            end
+        else
+            MySQL.insert.await('INSERT INTO `stashitems` (stash, items) VALUES (?, ?)', {key, json.encode(items)})
+        end
+    end)
+
+    Wait(30 * 60000)
+    trashSearched[key] = nil
 end)
