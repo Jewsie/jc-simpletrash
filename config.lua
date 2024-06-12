@@ -1,7 +1,7 @@
 Config = Config or {}
 
 Config.AmountToFind = math.random(1, 5) -- The range of how many items you can find in each dumpster/trash, can be a solid number too!
-Config.QBVersion == 'oldqb' -- Just the logic of how inventory itembox is handled!
+Config.QBVersion == 'oldqb' -- Just the logic of how inventory itembox is handled! "oldqb" or "newqb"
 
 Config.Trashcans = { -- The models of the trashcans you want to be searchable!
     'prop_dumpster_02a',
