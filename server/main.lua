@@ -1,6 +1,10 @@
 local QBCore = exports['qb-core']:GetCoreObject()
 local trashSearched = {}
 
+QBCore.Functions.CreateCallback('jc-trash:getData', function(_, cb)
+    cb(trashSearched)
+end)
+
 RegisterNetEvent('jc-trash:server:initialize', function(key, items)
     for i, v in pairs(items) do
         if not v.slot then
