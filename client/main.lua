@@ -22,11 +22,7 @@ Citizen.CreateThread(function()
                                     })
                                     TriggerEvent('inventory:client:SetCurrentStash', 'dumpster_' .. net_ent)
                                 else
-                                    TriggerServerEvent('qb-inventory:server:OpenInventory', 'stash', 'dumpster_' .. net_ent, {
-                                        maxweight = 1000000,
-                                        slots = 30,
-                                    })
-                                    TriggerEvent('qb-inventory:client:SetCurrentStash', 'dumpster_' .. net_ent)
+                                    TriggerServerEvent('simpletrash:server:openInventory', net_ent, 1000000, 30)
                                 end
                             else
                                 QBCore.Functions.Notify('Trash is empty!', 'error', 3000)

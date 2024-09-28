@@ -32,3 +32,9 @@ RegisterNetEvent('jc-trash:server:initialize', function(key, items)
     Wait(30 * 60000)
     trashSearched[key] = nil
 end)
+
+
+RegisterNetEvent('simpletrash:server:openInventory', function(stashId, weigtht, slots)
+    local data = { label = 'Trash', maxweight = weight, slots = slots }
+    exports['qb-inventory']:OpenInventory(source, stashId, data)
+end)
